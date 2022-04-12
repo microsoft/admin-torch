@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>admin_torch.admin &mdash; Admin-Torch  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../contents.html" class="icon icon-home"> Admin-Torch
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Admin-Torch documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../contents.html">Admin-Torch</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../contents.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>admin_torch.admin</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for admin_torch.admin</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<div class="viewcode-block" id="OmegaResidual"><a class="viewcode-back" href="../../index.html#admin_torch.OmegaResidual">[docs]</a><span class="k">class</span> <span class="nc">OmegaResidual</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Residual connection module with shortcut connection rescaling.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ---------- </span>
+<span class="sd">    init_value: ``float``, required.</span>
+<span class="sd">        The initialization value of the shortcut connection rescalar, omega. </span>
+<span class="sd">    as_parameter: ``bool``, optional (default = False).</span>
+<span class="sd">        Whether to set the rescalar as trainable parameter. Note that, when set as trainable</span>
+<span class="sd">        parameters, the rescalar would be set as a vector (similar to the weight vector in layer </span>
+<span class="sd">        norm), and the embed_dim input is required.  </span>
+<span class="sd">    embed_dim: ``int``, optional (default = None).</span>
+<span class="sd">        The hidden state dimension of the shortcut connection. This field is required and only used </span>
+<span class="sd">        when ``as_parameter == True``. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_value</span><span class="p">,</span> <span class="n">as_parameter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">embed_dim</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">as_parameter</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">embed_dim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;embed_dim is required when as_parameter is set as True&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">embed_dim</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">omega</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">init_value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_omega</span>
+        <span class="k">else</span><span class="p">:</span>            
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;omega&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">([</span><span class="n">init_value</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="mf">1.0</span> <span class="o">==</span> <span class="n">init_value</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">forward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_original</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">forward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_omega</span>
+    
+<div class="viewcode-block" id="OmegaResidual.forward"><a class="viewcode-back" href="../../index.html#admin_torch.OmegaResidual.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">f_x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate x * omega + f_x. The output shape would be same with the input shape. </span>
+
+<span class="sd">        When omega is set to be a constant 1 (``as buffer`` and ``O(n)`` output change), the </span>
+<span class="sd">        ``OmegaResidual`` would downgrade to the ordinary residual module and x + f_x  would be </span>
+<span class="sd">        calculated instead.  </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Placeholder forward function used in OmegaResidual&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">forward_original</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">f_x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">f_x</span>
+
+    <span class="k">def</span> <span class="nf">forward_omega</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">f_x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">omega</span> <span class="o">+</span> <span class="n">f_x</span></div>
+
+<span class="k">def</span> <span class="nf">calculate_init</span><span class="p">(</span>
+        <span class="n">num_res_layers</span><span class="p">,</span>
+        <span class="n">output_change_scale</span><span class="o">=</span><span class="s1">&#39;O(logn)&#39;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate initialization for omega.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ---------- </span>
+<span class="sd">    num_res_layers: ``int``, required.</span>
+<span class="sd">        The total number of residual layers. Typical n-layer Transformer encoder has 2n residual layers. </span>
+<span class="sd">    output_change_scale: ``str``, optional (default = ``&#39;O(logn)&#39;``).</span>
+<span class="sd">        The desired output change scale at initialization. Only ``&#39;O(n)&#39;``, ``&#39;O(logn)&#39;`` / ``&#39;default&#39;``, </span>
+<span class="sd">        and ``&#39;O(1)&#39;`` are supported. </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int: It would return the initialization value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;O(logn)&#39;</span> <span class="o">==</span> <span class="n">output_change_scale</span> <span class="ow">or</span> <span class="s1">&#39;default&#39;</span> <span class="o">==</span> <span class="n">output_change_scale</span><span class="p">:</span>
+        <span class="n">omega_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">num_res_layers</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">num_res_layers</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="s1">&#39;O(n)&#39;</span> <span class="o">==</span> <span class="n">output_change_scale</span><span class="p">:</span>
+        <span class="n">omega_value</span> <span class="o">=</span> <span class="mf">1.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="s1">&#39;O(1)&#39;</span> <span class="o">==</span> <span class="n">output_change_scale</span><span class="p">,</span> \
+            <span class="s1">&#39;only O(n), O(logn), and O(1) output changes are supported.&#39;</span>
+        <span class="n">omega_value</span> <span class="o">=</span> <span class="n">num_res_layers</span>
+    <span class="k">return</span> <span class="n">omega_value</span> <span class="o">**</span> <span class="mf">0.5</span>
+
+<div class="viewcode-block" id="as_module"><a class="viewcode-back" href="../../index.html#admin_torch.as_module">[docs]</a><span class="k">def</span> <span class="nf">as_module</span><span class="p">(</span>
+        <span class="n">num_res_layers</span><span class="p">,</span>
+        <span class="n">output_change_scale</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span>
+        <span class="n">as_parameter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">embed_dim</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OmegaResidual</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate initialization for omega and return a residual module with the initialized omega. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    num_res_layers: ``int``, required.</span>
+<span class="sd">        The total number of residual layers. Typical n-layer Transformer encoder has 2n residual layers. </span>
+<span class="sd">    output_change_scale: ``str``, optional (default = ``&#39;O(logn)&#39;``).</span>
+<span class="sd">        The desired output change scale at initialization. Only ``&#39;O(n)&#39;``, ``&#39;O(logn)&#39;`` / ``&#39;default&#39;``, </span>
+<span class="sd">        and ``&#39;O(1)&#39;`` are supported. </span>
+<span class="sd">    as_parameter: ``bool``, optional (default = False).</span>
+<span class="sd">        Whether to set the rescalar as trainable parameter. Note that, when set as trainable</span>
+<span class="sd">        parameters, the rescalar would be set as a vector (similar to the weight vector in</span>
+<span class="sd">        layer norm), and the embed_dim input is required.  </span>
+<span class="sd">    embed_dim: ``int``, optional (default = None).</span>
+<span class="sd">        The hidden state dimension of the shortcut connection. This field is required and only</span>
+<span class="sd">        used when as_parameter == True. </span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    admin_torch.OmegaResidual: It would return a ``OmegaResidual`` module with the properly initialized omega inside.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    </span>
+<span class="sd">    .. highlight:: python</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch.nn as nn</span>
+<span class="sd">        import admin_torch</span>
+
+<span class="sd">        class TransformerEncoderLayer(nn.Module):</span>
+
+<span class="sd">            def __init__(self, cfg):</span>
+<span class="sd">                super().__init__()</span>
+<span class="sd">                </span>
+<span class="sd">                num_layer =  2 * cfg.encoder_layers # number of residual layers</span>
+
+<span class="sd">                self.attn = nn.MultiheadAttention(cfg.embed_dim, cfg.num_heads)</span>
+<span class="sd">                self.residual_attn = admin_torch.as_module(num_layer) </span>
+<span class="sd">                self.ln_attn = nn.LayerNorm(cfg.embed_dim)</span>
+<span class="sd">    </span>
+<span class="sd">                self.ffn = nn.Sequential(</span>
+<span class="sd">                    nn.Linear(cfg.embed_dim, cfg.feedforward_dim),</span>
+<span class="sd">                    nn.ReLU(),</span>
+<span class="sd">                    nn.Linear(cfg.feedforward_dim)</span>
+<span class="sd">                )</span>
+<span class="sd">                self.residual_ffn = admin_torch.as_module(num_layer) </span>
+<span class="sd">                self.ln_ffn = nn.LayerNorm(cfg.embed_dim)</span>
+<span class="sd">            </span>
+<span class="sd">            def forward(self, x):</span>
+
+<span class="sd">                f_x, _ = self.attn(x)</span>
+<span class="sd">                x = self.residual_attn(x, f_x)</span>
+<span class="sd">                x = self.ln_attn(x)</span>
+
+<span class="sd">                f_x = self.ffn(x)</span>
+<span class="sd">                x = self.residual_ffn(x, f_x)</span>
+<span class="sd">                x = self.ln_ffn(x)</span>
+
+<span class="sd">                return x</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">omega_value</span> <span class="o">=</span> <span class="n">calculate_init</span><span class="p">(</span><span class="n">num_res_layers</span><span class="p">,</span> <span class="n">output_change_scale</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">OmegaResidual</span><span class="p">(</span><span class="n">omega_value</span><span class="p">,</span> <span class="n">as_parameter</span><span class="o">=</span><span class="n">as_parameter</span><span class="p">,</span> <span class="n">embed_dim</span><span class="o">=</span><span class="n">embed_dim</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="as_buffer"><a class="viewcode-back" href="../../index.html#admin_torch.as_buffer">[docs]</a><span class="k">def</span> <span class="nf">as_buffer</span><span class="p">(</span>
+        <span class="n">network</span><span class="p">,</span> 
+        <span class="n">buffer_name</span><span class="p">,</span>
+        <span class="n">num_res_layers</span><span class="p">,</span>
+        <span class="n">output_change_scale</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate initialization for omega and *register* omega as a buffer (not trainable).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    network: ``torch.nn.Module``, required.</span>
+<span class="sd">        The ``torch.nn.Module`` contains the residual network. This is where the omega would </span>
+<span class="sd">        be registered to.   </span>
+<span class="sd">    buffer_name: ``str``, required.</span>
+<span class="sd">        The name of omega (as buffer). The omega can be accessed in the network, using the</span>
+<span class="sd">        given name.</span>
+<span class="sd">    num_res_layers: ``int``, required.</span>
+<span class="sd">        The total number of residual layers. Typical n-layer Transformer encoder has 2n residual layers. </span>
+<span class="sd">    output_change_scale: ``str``, optional (default = ``&#39;O(logn)&#39;``).</span>
+<span class="sd">        The desired output change scale at initialization. Only ``&#39;O(n)&#39;``, ``&#39;O(logn)&#39;`` / ``&#39;default&#39;``, </span>
+<span class="sd">        and ``&#39;O(1)&#39;`` are supported. </span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None: No returns. The initialized omega would be registered as a buffer within `network`. </span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    </span>
+<span class="sd">    .. highlight:: python</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch.nn as nn</span>
+<span class="sd">        import admin_torch</span>
+
+<span class="sd">        class TransformerEncoderLayer(nn.Module):</span>
+
+<span class="sd">            def __init__(self, cfg):</span>
+<span class="sd">                super().__init__()</span>
+<span class="sd">                </span>
+<span class="sd">                num_layer =  2 * cfg.encoder_layers # number of residual layers</span>
+
+<span class="sd">                self.attn = nn.MultiheadAttention(cfg.embed_dim, cfg.num_heads)</span>
+<span class="sd">                admin_torch.as_buffer(self, &#39;attn_omega&#39;, num_layer)</span>
+<span class="sd">                self.ln_attn = nn.LayerNorm(cfg.embed_dim)</span>
+<span class="sd">    </span>
+<span class="sd">                self.ffn = nn.Sequential(</span>
+<span class="sd">                    nn.Linear(cfg.embed_dim, cfg.feedforward_dim),</span>
+<span class="sd">                    nn.ReLU(),</span>
+<span class="sd">                    nn.Linear(cfg.feedforward_dim)</span>
+<span class="sd">                )</span>
+<span class="sd">                admin_torch.as_buffer(self, &#39;ffn_omega&#39;, num_layer)</span>
+<span class="sd">                self.ln_ffn = nn.LayerNorm(cfg.embed_dim)</span>
+<span class="sd">            </span>
+<span class="sd">            def forward(self, x):</span>
+
+<span class="sd">                f_x, _ = self.attn(x)</span>
+<span class="sd">                x = x * self.attn_omega + f_x</span>
+<span class="sd">                x = self.ln_attn(x)</span>
+
+<span class="sd">                f_x = self.ffn(x)</span>
+<span class="sd">                x = x * self.ffn_omega + f_x</span>
+<span class="sd">                x = self.ln_ffn(x)</span>
+
+<span class="sd">                return x</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">),</span> \
+        <span class="s1">&#39;the input network has to be a torch.nn.Module object&#39;</span>
+    <span class="n">omega_value</span> <span class="o">=</span> <span class="n">calculate_init</span><span class="p">(</span><span class="n">num_res_layers</span><span class="p">,</span> <span class="n">output_change_scale</span><span class="p">)</span>
+    <span class="n">network</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="n">buffer_name</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">([</span><span class="n">omega_value</span><span class="p">]))</span></div>
+
+<div class="viewcode-block" id="as_parameter"><a class="viewcode-back" href="../../index.html#admin_torch.as_parameter">[docs]</a><span class="k">def</span> <span class="nf">as_parameter</span><span class="p">(</span>
+        <span class="n">network</span><span class="p">,</span> 
+        <span class="n">parameter_name</span><span class="p">,</span>
+        <span class="n">num_res_layers</span><span class="p">,</span>
+        <span class="n">embed_dim</span><span class="p">,</span>
+        <span class="n">output_change_scale</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate initialization for omega and *register* omega as a parameter (trainable).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    network: ``torch.nn.Module``, required.</span>
+<span class="sd">        The ``torch.nn.Module`` contains the residual network. This is where the omega would </span>
+<span class="sd">        be registered to.   </span>
+<span class="sd">    parameter_name: ``str``, required.</span>
+<span class="sd">        The name of omega (as parameter). The omega can be accessed in the network, using the</span>
+<span class="sd">        given name.</span>
+<span class="sd">    num_res_layers: ``int``, required.</span>
+<span class="sd">        The total number of residual layers. Typical n-layer Transformer encoder has 2n residual layers. </span>
+<span class="sd">    embed_dim: ``int``, required.</span>
+<span class="sd">        The hidden state dimension of the shortcut connection. </span>
+<span class="sd">    output_change_scale: ``str``, optional (default = ``&#39;O(logn)&#39;``).</span>
+<span class="sd">        The desired output change scale at initialization. Only ``&#39;O(n)&#39;``, ``&#39;O(logn)&#39;`` / ``&#39;default&#39;``, </span>
+<span class="sd">        and ``&#39;O(1)&#39;`` are supported. </span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None: No returns. The initialized omega would be registered as a parameter within `network`. </span>
+<span class="sd">        </span>
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    </span>
+<span class="sd">    .. highlight:: python</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch.nn as nn</span>
+<span class="sd">        import admin_torch</span>
+
+<span class="sd">        class TransformerEncoderLayer(nn.Module):</span>
+
+<span class="sd">            def __init__(self, cfg):</span>
+<span class="sd">                super().__init__()</span>
+
+<span class="sd">                num_layer =  2 * cfg.encoder_layers # number of residual layers</span>
+
+<span class="sd">                self.attn = nn.MultiheadAttention(cfg.embed_dim, cfg.num_heads)</span>
+<span class="sd">                admin_torch.as_parameter(self, &#39;attn_omega&#39;, num_layer, cfg.embed_dim) </span>
+<span class="sd">                self.ln_attn = nn.LayerNorm(cfg.embed_dim)</span>
+<span class="sd">    </span>
+<span class="sd">                self.ffn = nn.Sequential(</span>
+<span class="sd">                    nn.Linear(cfg.embed_dim, cfg.feedforward_dim),</span>
+<span class="sd">                    nn.ReLU(),</span>
+<span class="sd">                    nn.Linear(cfg.feedforward_dim)</span>
+<span class="sd">                )</span>
+<span class="sd">                admin_torch.as_parameter(self, &#39;ffn_omega&#39;, num_layer, cfg.embed_dim) </span>
+<span class="sd">                self.ln_ffn = nn.LayerNorm(cfg.embed_dim)</span>
+<span class="sd">            </span>
+<span class="sd">            def forward(self, x):</span>
+
+<span class="sd">                f_x, _ = self.attn(x)</span>
+<span class="sd">                x = x * self.attn_omega + f_x</span>
+<span class="sd">                x = self.ln_attn(x)</span>
+
+<span class="sd">                f_x = self.ffn(x)</span>
+<span class="sd">                x = x * self.ffn_omega + f_x</span>
+<span class="sd">                x = self.ln_ffn(x)</span>
+
+<span class="sd">                return x</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">omega_vector</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">embed_dim</span><span class="p">)</span>
+    <span class="n">omega_vector</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">calculate_init</span><span class="p">(</span><span class="n">num_res_layers</span><span class="p">,</span> <span class="n">output_change_scale</span><span class="p">))</span>
+    <span class="n">network</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">omega_vector</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Liyuan Liu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
