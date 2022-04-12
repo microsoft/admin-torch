@@ -9,3 +9,6 @@ include HISTORY.rst
 
 # Include the script
 include bin/torch_scope
+
+# Include image
+include doc/source/_static/output_change.png

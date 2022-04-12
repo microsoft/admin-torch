@@ -16,31 +16,25 @@ requirements = [
 
 setup(
     name='admin_torch',
-    version='0.1',
+    version='0.1.0',
     description='Plug-in-and-Play Toolbox for Stablizing Transformer Training',
     long_description= read_readme(),
     long_description_content_type="text/markdown",
     author='Lucas Liu',
     author_email='llychinalz@gmail.com',
-    url='',
+    url='https://github.com/microsoft/admin-torch',
     packages=find_packages(exclude=['docs']),
     include_package_data=True,
     install_requires=requirements,
     license='Apache License 2.0',
-    entry_points={
-        'console_scripts': ['torch_scope=torch_scope.commands:run'],
-    },
     zip_safe=False,
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'Natural Language :: English',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',        
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
     ]
 )
 
