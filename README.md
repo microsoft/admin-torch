@@ -1,5 +1,9 @@
-
-![GitHub](https://img.shields.io/github/license/Microsoft/Admin-Torch) [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/very-deep-transformers-for-neural-machine/machine-translation-on-wmt2014-english-french)](https://paperswithcode.com/sota/machine-translation-on-wmt2014-english-french?p=very-deep-transformers-for-neural-machine) [![Maintenance](https://img.shields.io/badge/doc-yes-green.svg)](https://microsoft.github.io/admin-torch/) ![PyPI](https://img.shields.io/pypi/v/admin-torch)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/very-deep-transformers-for-neural-machine/machine-translation-on-wmt2014-english-french)](https://paperswithcode.com/sota/machine-translation-on-wmt2014-english-french?p=very-deep-transformers-for-neural-machine)
+![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=flat&logo=PyTorch&logoColor=white)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/admin-torch) 
+![GitHub](https://img.shields.io/github/license/Microsoft/Admin-Torch) 
+[![Maintenance](https://img.shields.io/badge/doc-yes-success.svg)](https://microsoft.github.io/admin-torch/) 
+![PyPI](https://img.shields.io/pypi/v/admin-torch) 
 
 <h2 align="center">Admin-Torch</h2>
 <h5 align="center">Transformers Training **Stabilized**</h5>
