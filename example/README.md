@@ -1,9 +1,9 @@
 # Table of Contents
 
-- [`admin_torch` on WMT'14 En-De](#admin_torch-on-WMT14-En-De)
-- [Comparison with original Admin and DeepNet](#comparison-with-original-Admin-and-DeepNet)
+- [Real example: `admin_torch` on WMT'14 En-De](#admin_torch-on-WMT14-En-De)
+- [Comparison with original Admin and DeepNet](#comparison-with-original-admin-and-deepnet-on-wmt17-en-de)
 
-# `admin-torch` on WMT'14 En-De 
+# Real example: `admin-torch` on WMT'14 En-De 
 
 As an example, we apply `admin_torch` to `fairseq` and trained a Encoder-Decoder model
 on WMT'14 En-De. 
