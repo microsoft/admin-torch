@@ -1,6 +1,6 @@
 .. Admin-Torch documentation file.
 
-:github_url: https://github.com/LiyuanLucasLiu/Admin
+:github_url: https://github.com/microsoft/admin-torch
 
 *************************
 Admin-Torch documentation

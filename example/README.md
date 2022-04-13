@@ -5,8 +5,9 @@
 
 # Real example: `admin-torch` on WMT'14 En-De 
 
-As an example, we apply `admin_torch` to `fairseq` and trained a Encoder-Decoder model
-on WMT'14 En-De. 
+As an example, we apply `admin_torch` to `fairseq` and train Transformer on WMT'14 En-De. 
+
+> Note: the efforts to incorporate `admin-torch` into fairseq are summarized as [this commit](https://github.com/LiyuanLucasLiu/fairseq/commit/33ad76ae5dc927bc32b9594f9728a367c45680bb):
 
 ## 1. Pre-processing
 
@@ -15,10 +16,11 @@ on WMT'14 En-De.
 please refer to [the Transformer-Clinic repo](https://github.com/LiyuanLucasLiu/Transformer-Clinic/blob/master/pre-process/wmt14en-de.sh) for data preparation. 
 
 ### 1.2. Package Install
+
 ```
-pip install admin_torch
+pip install admin_torch==0.1.0
 pip uninstall fairseq
-pip install https://github.com/LiyuanLucasLiu/fairseq/admin-torch.zip
+pip install https://github.com/LiyuanLucasLiu/fairseq/archive/refs/tags/admin-torch.zip
 ```
 
 ## 2. Training and Evaluation
@@ -46,27 +48,27 @@ from data preparation. `$OUTPUT_PATH` is the path used in the training step.
 | 18L-18L      | 28.91 | TBD |
 | 100L-100L*   | 29.65 | TBD |
 
-*: trained with the [huge-batch-size setting](#comparison-with-original-admin-and-deepnet),
+*: trained with the [huge-batch-size setting](#omparison-with-original-admin-and-deepnet-on-wmt17-en-de),
 but only for 40 epochs, due to the huge cost of the training. 
 
-## 4. Discussion on `admin-torch` settings. 
+## 4. Discussion on the `admin-torch` setting. 
 
 `admin-torch.as_module` can be configured by changing `output_change_scale` and
 `as_parameter`. `output_change_scale` can be set to `O(1)` for additional stability, but
 results in a performance drop in our experiments. `as_parameter` can be set to `False` to
-make `omega` not trainable (the shortcut connection scaler). Their performance are listed
+make `omega` (the shortcut connection scaler) as a constant (no updates). Their performance are listed
 as below:
 
-|    Layer Number | Output Change | Omega Trainable | BLEU  |
+|    Layer Number | Output Change | Omega           | BLEU  |
 |-----------------|---------------|-----------------|-------|
-| 6L-6L           | O(1)          | not Trainable   | 27.71 |
-| 6L-6L           | O(1)          | Trainable       | 27.79 |
-| 6L-6L           | O(logn)       | not Trainable   | 27.83 |
-| 6L-6L           | O(logn)       | Trainable       | 27.84 |
-| 18L-18L         | O(1)          | not Trainable   | 28.66 |
-| 18L-18L         | O(1)          | Trainable       | 28.89 |
-| 18L-18L         | O(logn)       | not Trainable   | 28.78 |
-| 18L-18L         | O(logn)       | Trainable       | 28.91 |
+| 6L-6L           | O(1)          | as a constant   | 27.71 |
+| 6L-6L           | O(1)          | as a parameter  | 27.79 |
+| 6L-6L           | O(logn)       | as a constant   | 27.83 |
+| 6L-6L           | O(logn)       | as a parameter  | 27.84 |
+| 18L-18L         | O(1)          | as a constant   | 28.66 |
+| 18L-18L         | O(1)          | as a parameter  | 28.89 |
+| 18L-18L         | O(logn)       | as a constant   | 28.78 |
+| 18L-18L         | O(logn)       | as a parameter  | 28.91 |
 
 # Comparison with original Admin and DeepNet on WMT'17 En-De
 
@@ -112,8 +114,8 @@ pip install --editable .
 ```
 # Before running the training, the original admin requires to do a profilling 
 # of the network. The profilling result for 100L-100L is included in this repo
-# (i.e., profile.ratio.init). The command to generate this profilling can be
-# found at https://github.com/LiyuanLucasLiu/Transformer-Clinic/blob/master/nmt-experiments/wmt14_en-de.md#100l-100l-admin-without-any-hyper-parameter-tuning
+# (i.e., example/profile.ratio.init). The command to generate this profilling 
+# can be found at https://github.com/LiyuanLucasLiu/Transformer-Clinic/blob/master/nmt-experiments/wmt14_en-de.md#100l-100l-admin-without-any-hyper-parameter-tuning
 
 # regular batch size (4096 x 8)
 bash train_wmt_en-de.sh $PATH-to-WMT17 100 $OUTPUT_PATH_REG "--init-type adaptive"
@@ -136,9 +138,9 @@ bash train_wmt_en-de_huge.sh $PATH-to-WMT17 100 $OUTPUT_PATH_HUG "--init-type de
 ### 3.1 Package Install
 
 ```
-pip install admin_torch
+pip install admin_torch==0.1.0
 pip uninstall fairseq
-pip install https://github.com/LiyuanLucasLiu/fairseq/admin-torch.zip
+pip install https://github.com/LiyuanLucasLiu/fairseq/archive/refs/tags/admin-torch.zip
 ```
 
 ### 3.2 Training and Evaluation

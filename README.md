@@ -63,12 +63,12 @@ More details can be found in our [paper](https://arxiv.org/abs/2004.08249).
 
 ### install 
 ```
-pip install admin-torch
+pip install admin-torch==0.1.0
 ```
 
 ### import
 ```
-import admin-torch
+import admin_torch
 ```
 
 ### enjoy
@@ -76,7 +76,7 @@ import admin-torch
 ```diff
 def __init__(self, ...):
 ...
-+(residual = admin-torch.as_module(self, self.number_of_sub_layers))+
++(residual = admin_torch.as_module(self, self.number_of_sub_layers))+
 ...
 
 def forward(self, ):
@@ -87,7 +87,7 @@ x = self.LN(x)
 ...
 ```
 
-An elaborated example can be found at [our doc](https://liyuanlucasliu.github.io/Admin/), and a real working example can be found at [LiyuanLucasLiu/fairseq](https://github.com/LiyuanLucasLiu/fairseq/commit/33ad76ae5dc927bc32b9594f9728a367c45680bb) (training recipe is available at [our example](https://github.com/microsoft/admin-torch/tree/main/example)).
+An elaborated example can be found at [our doc](https://microsoft.github.io/admin-torch/), and a real working example can be found at [LiyuanLucasLiu/fairseq](https://github.com/LiyuanLucasLiu/fairseq/commit/33ad76ae5dc927bc32b9594f9728a367c45680bb) (training recipe is available at [our example](https://github.com/microsoft/admin-torch/tree/main/example)).
 
 ## Citation
 Please cite the following papers if you found our model useful. Thanks!
