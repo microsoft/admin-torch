@@ -122,6 +122,9 @@ bash train_wmt_en-de.sh $PATH-to-WMT17 100 $OUTPUT_PATH_REG "--init-type adaptiv
 
 # huge batch size (4096 x 128)
 bash train_wmt_en-de_huge.sh $PATH-to-WMT17 100 $OUTPUT_PATH_HUG "--init-type adaptive"
+
+# evaluate 
+bash eval_wmt_en-de.sh $PATH-to-WMT17 none $OUTPUT_PATH_HUG/REG 45 10
 ```
 
 #### 2.2.2. DeepNet
@@ -131,6 +134,9 @@ bash train_wmt_en-de.sh $PATH-to-WMT17 100 $OUTPUT_PATH_REG "--init-type deepnet
 
 # huge batch size (4096 x 128)
 bash train_wmt_en-de_huge.sh $PATH-to-WMT17 100 $OUTPUT_PATH_HUG "--init-type deepnet"
+
+# evaluate 
+bash eval_wmt_en-de.sh $PATH-to-WMT17 none $OUTPUT_PATH_HUG/REG 45 10
 ```
 
 ## 3 `torch-admin`
@@ -153,6 +159,5 @@ bash train_wmt_en-de.sh $PATH-to-WMT17 100 $OUTPUT_PATH_REG
 bash train_wmt_en-de_huge.sh $PATH-to-WMT17 100 $OUTPUT_PATH_HUG
 
 # evaluate 
-bash eval_wmt_en-de.sh $PATH-to-WMT17 none $OUTPUT_PATH_HUG 45 10
-# should give you a BLEU score of 29.22
+bash eval_wmt_en-de.sh $PATH-to-WMT17 none $OUTPUT_PATH_HUG/REG 45 10
 ```
