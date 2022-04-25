@@ -50,7 +50,7 @@ For Transformer f, input x, randomly initialized weight w, we describe its stabi
 <!-- $E[|f(x, w) - f(x, w + \delta)|_2^2]$ --> <img style="transform: translateY(0.1em); background: white;" src="https://render.githubusercontent.com/render/math?math=E%5B%7Cf(x%2C%20w)%20-%20f(x%2C%20w%20%2B%20%5Cdelta)%7C_2%5E2%5D">
 </p>
 
-In [our study](https://arxiv.org/abs/2004.08249), we show that, an original N-layer Transformer's 
+In [our study](https://arxiv.org/abs/2004.08249), we show that, an original n-layer Transformer's 
 ``output_change_scale`` is ``O(n)``, which unstabilizes its training. Admin stabilize Transformer's
 training by regulating this scale to ``O(logn)`` or ``O(1)``. 
 
