@@ -31,7 +31,7 @@ Beyond the [original admin implementation](https://github.com/LiyuanLucasLiu/Tra
 2.  `admin-torch`'s implementation is **more robust** (see below).
 
 Comparison w. the [DeepNet Init](https://arxiv.org/abs/2203.00555) and the [Original Admin Init](https://github.com/LiyuanLucasLiu/Transformer-Clinic) 
-(on WMT'17).
+(on WMT'17 En-De).
 
 |               | Regular batch size (8x4096) |  Huge batch size (128x4096) |
 |---------------|--------------------|------------------|
