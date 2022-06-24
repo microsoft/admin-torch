@@ -1,7 +1,7 @@
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/very-deep-transformers-for-neural-machine/machine-translation-on-wmt2014-english-french)](https://paperswithcode.com/sota/machine-translation-on-wmt2014-english-french?p=very-deep-transformers-for-neural-machine)
 ![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=flat&logo=PyTorch&logoColor=white)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/admin-torch) 
-![GitHub](https://img.shields.io/github/license/Microsoft/Admin-Torch) 
+![GitHub](https://img.shields.io/github/license/microsoft/admin-Torch) 
 [![Maintenance](https://img.shields.io/badge/doc-yes-success.svg)](https://microsoft.github.io/admin-torch/) 
 ![PyPI](https://img.shields.io/pypi/v/admin-torch) 
 
@@ -31,7 +31,7 @@ Beyond the [original admin implementation](https://github.com/LiyuanLucasLiu/Tra
 2.  `admin-torch`'s implementation is **more robust** (see below).
 
 Comparison w. the [DeepNet Init](https://arxiv.org/abs/2203.00555) and the [Original Admin Init](https://github.com/LiyuanLucasLiu/Transformer-Clinic) 
-(on WMT'17).
+(on WMT'17 En-De).
 
 |               | Regular batch size (8x4096) |  Huge batch size (128x4096) |
 |---------------|--------------------|------------------|
@@ -50,7 +50,7 @@ For Transformer f, input x, randomly initialized weight w, we describe its stabi
 <!-- $E[|f(x, w) - f(x, w + \delta)|_2^2]$ --> <img style="transform: translateY(0.1em); background: white;" src="https://render.githubusercontent.com/render/math?math=E%5B%7Cf(x%2C%20w)%20-%20f(x%2C%20w%20%2B%20%5Cdelta)%7C_2%5E2%5D">
 </p>
 
-In [our study](https://arxiv.org/abs/2004.08249), we show that, an original N-layer Transformer's 
+In [our study](https://arxiv.org/abs/2004.08249), we show that, an original n-layer Transformer's 
 ``output_change_scale`` is ``O(n)``, which unstabilizes its training. Admin stabilize Transformer's
 training by regulating this scale to ``O(logn)`` or ``O(1)``. 
 
