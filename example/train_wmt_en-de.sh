@@ -1,7 +1,7 @@
 DATA_PATH=${1:-"./wmt14_en_de_joined_dict"}
 LAYERS=${2:-18}
-OUTPUT_PATH=${2:-"./admin_18L_asParameter"}
-ADDITIONAL_ARGS=${3:-"--share-all-embeddings --encoder-as-parameter --decoder-as-parameter"}
+OUTPUT_PATH=${3:-"./admin_18L_asParameter"}
+ADDITIONAL_ARGS=${4:-"--share-all-embeddings --encoder-as-parameter --decoder-as-parameter"}
 
 TOKENS=4096
 DEVICE_NUMBER=8
