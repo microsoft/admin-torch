@@ -76,13 +76,13 @@ import admin_torch
 ```diff
 def __init__(self, ...):
 ...
-+(residual = admin_torch.as_module(self, self.number_of_sub_layers))+
++(self.residual = admin_torch.as_module(self, self.number_of_sub_layers))+
 ...
 
-def forward(self, ):
+def forward(self, ...):
 ...
--!x = x + f(x)!-
-+(x = residual(x, f(x)))+
+-!x = x + self.f(x)!-
++(x = self.residual(x, self.f(x)))+
 x = self.LN(x)
 ...
 ```
